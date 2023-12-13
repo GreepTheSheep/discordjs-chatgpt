@@ -4,7 +4,9 @@ const Command = require('./structures/Command'),
     client = new Client({
         intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
         partials: [Partials.Channel]
-    });
+    }),
+    Enmap = require('enmap'),
+    db = new Enmap({name: "discordgpt"});
 
 client.login().catch(err=>{
     console.error("❌ Connexion to Discord failed: " + err);
@@ -37,7 +39,7 @@ client.on('interactionCreate', async interaction => {
             const command = commands.find(c => c.name === interaction.commandName);
             if (!command) return;
 
-            await command.execute(interaction, commands);
+            await command.execute(interaction, commands, db);
 
         } else if (interaction.isStringSelectMenu()) {
 

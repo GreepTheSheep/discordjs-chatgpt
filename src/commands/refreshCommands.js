@@ -35,6 +35,8 @@ exports.args = [
  * @param {Command[]} commands
  */
 exports.execute = async (interaction, commands) => {
+    if (interaction.user.id != process.env.OWNER_ID) return interaction.reply({content: "You don't have permissions to do this", ephemeral: true});
+
     await interaction.deferReply({ephemeral: true});
 
     let thisGuild = interaction.options.getBoolean("thisguild") | false;
