@@ -112,6 +112,7 @@ async function registerCommands(guildId, userId, commands) {
                 DJS.Routes.applicationGuildCommands(userId, guildId),
                 { body: bodyCommands },
             ).catch(err => {
+                console.error("Discord API error:", err);
                 if (err.code == 50013) {
                     console.log(`Guild ${guildId} does not exist.`);
                 }

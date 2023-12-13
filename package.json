@@ -1,5 +1,5 @@
 {
-    "name": "discord-template-bot",
+    "name": "discord-gpt-bot",
     "version": "1.0.0",
     "private": true,
     "description": "A discord bot",
@@ -22,7 +22,8 @@
     "funding": "https://github.com/sponsors/GreepTheSheep",
     "dependencies": {
         "discord.js": "^14.14.1",
-        "dotenv": "^16.3.1"
+        "dotenv": "^16.3.1",
+        "enmap": "^5.9.8"
     },
     "devDependencies": {
         "eslint": "^8.52.0",

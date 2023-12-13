@@ -27,7 +27,7 @@ client.on('ready', async () => {
     // Register commands
     await require('./registerCommandsScript')(null, client.user.id, commands);
     // client.guilds.cache.forEach(async (guild) => {
-    //     await require('./registerCommandsScript')(guild.id, client.user.id, commands);
+    //     await require('./registerCommandsScript')(guild.id, client.user.id, []);
     // });
 });
 
