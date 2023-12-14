@@ -1,18 +1,18 @@
-const Command = require('../structures/Command'),
-    {MessageEmbed, CommandInteraction, SelectMenuInteraction, Message, MessageActionRow, MessageButton, MessageSelectMenu, ButtonStyle, ChannelType } = require('discord.js');
+const Command = require('../../structures/Command'),
+    { CommandInteraction, SelectMenuInteraction } = require('discord.js');
 
 /**
  * Set the command here, it's what we'll type in the message
  * @type {string}
  */
-exports.name = 'setup';
+exports.name = 'model';
 
 
 /**
  * Set the description here, this is what will show up when you need help for the command
  * @type {string}
  */
-exports.description = 'Setup the bot for using ChatGPT';
+exports.description = 'Set ChatGPT model';
 
 
 /**
@@ -21,15 +21,8 @@ exports.description = 'Setup the bot for using ChatGPT';
  */
 exports.args = [
     {
-        name: 'channel',
-        description: 'Server Channel',
-        type: 'channel',
-        required: true,
-        channelTypes: ChannelType.GuildText
-    },
-    {
         name: 'model',
-        description: 'GPT model version',
+        description: 'ChatGPT model',
         type: 'string',
         required: true,
         choices: [
@@ -74,18 +67,6 @@ exports.args = [
                 value: "gpt-4-1106-preview"
             }
         ]
-    },
-    {
-        name: "begin_message",
-        description: "A message to tell users that they need to reply to this",
-        type: 'string',
-        required: false
-    },
-    {
-        name: "delete_delay",
-        description: "A delay (in minutes) for the message to be deleted after being sent (not deleted by default).",
-        type: 'number',
-        required: false
     }
 ];
 
@@ -94,37 +75,20 @@ exports.args = [
  * This part is executed as slash command
  * @param {CommandInteraction} interaction
  * @param {Command[]} commands
- * @param {import('enmap').default} db
  */
 exports.execute = async (interaction, commands, db) => {
     if (interaction.user.id != process.env.OWNER_ID) return interaction.reply({content: "You don't have permissions to do this", ephemeral: true});
     if (process.env.OPENAI_KEY == undefined) return interaction.reply({content: "Your bot is missing a `OPENAI_KEY` in your .env, please add it and restart your bot.", ephemeral: true});
-    if (db.has("setup_ok") && db.get("setup_ok")) return interaction.reply({content: "Setup is already done. Please use `/resetsetup` to reset and redo the setup.", ephemeral: true});
+    if (!db.has("setup_ok") || !db.get("setup_ok")) return interaction.reply({content: "Setup has not been done. Please use `/setup`", ephemeral: true});
 
-    await interaction.deferReply({ephemeral: true});
+    let model = interaction.options.getString('model');
 
-    let channel = interaction.options.getChannel("channel"),
-        model = interaction.options.getString("model"),
-        beginMessage = interaction.options.getString("begin_message"),
-        delete_delay = interaction.options.getNumber("delete_delay");
-
-    db.set("channel", channel.id);
     db.set("model", model);
-    db.set("delete_delay", delete_delay);
 
-    if (beginMessage == null) beginMessage = "Hello! To start chatting, reply directly to this message! (do not send messages directly to the channel)";
-
-    let message = await channel.send({
-        content: beginMessage
+    interaction.reply({
+        content: 'Model set to ' + model,
+        ephemeral: true
     });
-
-    db.set("beginMessage", message.id);
-
-    interaction.editReply({
-        content: `Channel set correctly to <#${channel.id}>`
-    });
-
-    db.set("setup_ok", true);
 };
 
 /**

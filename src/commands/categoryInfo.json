@@ -1,1 +1,8 @@
-[]
+[
+    {
+        "name": "ChatGPT Parameters",
+        "dir": "parameters",
+        "description": "ChatGPT Parameters",
+        "emoji": "🔧"
+    }
+]

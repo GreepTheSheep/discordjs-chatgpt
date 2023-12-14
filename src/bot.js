@@ -2,7 +2,7 @@ require('dotenv').config();
 const Command = require('./structures/Command'),
     { Client, GatewayIntentBits, Partials, ActivityType } = require('discord.js'),
     client = new Client({
-        intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+        intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
         partials: [Partials.Channel]
     }),
     Enmap = require('enmap'),
@@ -22,7 +22,6 @@ let commands=[];
 
 client.on('ready', async () => {
     console.log(`🤖 Logged in as ${client.user.tag}!`);
-    client.user.setActivity({name: 'Bot is starting up...', type: ActivityType.Custom});
 
     commands = require('./fetchAllCommands')();
 
@@ -53,7 +52,7 @@ client.on('interactionCreate', async interaction => {
             if (categoryId === command.name+'_') categoryId = interaction.customId.substring(idIndexOf);
             else argument = interaction.customId.substring(interaction.customId.indexOf('_', idIndexOf)+1);
 
-            await command.executeSelectMenu(interaction, categoryId, argument, commands);
+            await command.executeSelectMenu(interaction, categoryId, argument, commands, db);
 
         } else if (interaction.isButton()) {
 
@@ -67,7 +66,7 @@ client.on('interactionCreate', async interaction => {
             if (buttonId === command.name+'_') buttonId = interaction.customId.substring(idIndexOf);
             else argument = interaction.customId.substring(interaction.customId.indexOf('_', idIndexOf)+1);
 
-            await command.executeButton(interaction, buttonId, argument, commands);
+            await command.executeButton(interaction, buttonId, argument, commands, db);
 
         } else if (interaction.isModalSubmit()) {
             const command = commands.find(c => c.name === interaction.customId.split('_')[0]);
@@ -80,7 +79,7 @@ client.on('interactionCreate', async interaction => {
             if (modalId === command.name+'_') modalId = interaction.customId.substring(idIndexOf);
             else argument = interaction.customId.substring(interaction.customId.indexOf('_', idIndexOf)+1);
 
-            await command.executeModal(interaction, modalId, argument, commands);
+            await command.executeModal(interaction, modalId, argument, commands, db);
         }
     } catch (err) {
         interaction.reply({
@@ -91,11 +90,29 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-client.on('guildCreate', guild=>{
-    console.log('📌 New guild joined: ' + guild.name);
-    // require('./registerCommandsScript')(guild.id, client.user.id, commands);
-});
+client.on('messageCreate', async message=>{
+    if (
+        message.author.bot ||
+        !db.has("setup_ok") ||
+        !db.get("setup_ok") ||
+        !db.has("channel") ||
+        message.channel.id != db.get("channel")
+    ) return;
 
-client.on('guildDelete', guild=>{
-    console.log('📌 Guild left: ' + guild.name);
+    try {
+        await message.fetchReference();
+        await require('./gpt')(message, client, db);
+    } catch (err) {
+        let botMsg;
+        if (err.code == "MessageReferenceMissing")
+            botMsg = await message.reply({
+                content: "Do not send messages directly in this channel. Please reply to a message."
+            });
+        else
+            botMsg = await message.reply({
+                content: '❌ An error occurred while processing the message: ' + err,
+            });
+        setTimeout(() => message.delete(), 1000);
+        setTimeout(() => botMsg.delete(), 7000);
+    }
 });
