@@ -1,0 +1,17 @@
+version: '3.9'
+secrets:
+  discord:
+    image: node:lts
+    restart: always
+    working_dir: /home/node/app
+    volumes:
+      - ./src:/home/node/app/src
+      - ./node_modules:/home/node/app/node_modules
+      - ./data:/home/node/app/data
+      - ./package.json:/home/node/app/package.json
+      - ./package-lock.json:/home/node/app/package-lock.json
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+    command: node ./src/bot.js
