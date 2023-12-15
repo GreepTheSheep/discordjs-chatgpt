@@ -41,12 +41,19 @@ exports.execute = async (interaction, commands, db) => {
 
     let delay = interaction.options.getNumber('delete_delay');
 
-    db.set("delete_delay", delay);
-
-    interaction.reply({
-        content: 'Delete delay set to ' + delay + " minutes",
-        ephemeral: true
-    });
+    if (delay == 0) {
+        db.delete("delete_delay");
+        interaction.reply({
+            content: 'Delete delay removed',
+            ephemeral: true
+        });
+    } else {
+        db.set("delete_delay", delay);
+        interaction.reply({
+            content: "Delete delay set to " + delay + " minutes",
+            ephemeral: true
+        });
+    }
 };
 
 /**
