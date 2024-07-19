@@ -27,44 +27,24 @@ exports.args = [
         required: true,
         choices: [
             {
+                name: "GPT 4o Mini",
+                value: "gpt-4o-mini"
+            },
+            {
                 name: "GPT 3.5 Turbo",
                 value: "gpt-3.5-turbo"
-            },
-            {
-                name: "GPT 3.5 Turbo (1106)",
-                value: "gpt-3.5-turbo-1106"
-            },
-            {
-                name: "GPT 3.5 Turbo (16k tokens)",
-                value: "gpt-3.5-turbo-16k"
             },
             {
                 name: "GPT 4",
                 value: "gpt-4"
             },
             {
-                name: "GPT 4 Turbo (1106 Preview)",
-                value: "gpt-4-1106-preview"
+                name: "GPT 4 Turbo (Preview)",
+                value: "gpt-4-turbo-preview"
             },
             {
-                name: "GPT 3.5 Turbo (0301)",
-                value: "gpt-3.5-turbo-0301"
-            },
-            {
-                name: "GPT 3.5 Turbo (0613)",
-                value: "gpt-3.5-turbo-0613"
-            },
-            {
-                name: "GPT 3.5 Turbo (16k context / 0613)",
-                value: "gpt-3.5-turbo-16k-0613"
-            },
-            {
-                name: "GPT 4 (0314)",
-                value: "gpt-4-0314"
-            },
-            {
-                name: "GPT 4 (0613)",
-                value: "gpt-4-0613"
+                name: "GPT 4 Turbo (with Vision)",
+                value: "gpt-4-turbo"
             }
         ]
     }
