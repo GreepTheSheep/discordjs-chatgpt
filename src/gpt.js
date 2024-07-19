@@ -44,7 +44,7 @@ module.exports = async function(message, client, db) {
     console.log(JSON.stringify(openAiMessages, null, 2));
 
     const response = await openai.chat.completions.create({
-        model: db.has("model") ? db.get("model") : "gpt-3.5-turbo",
+        model: db.has("model") ? db.get("model") : "gpt-4o-mini",
         messages: openAiMessages,
         temperature: 1,
         max_tokens: db.has("max_tokens") ? db.get("max_tokens") : 256,
